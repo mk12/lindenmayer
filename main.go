@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"github.com/ajstarks/svgo"
@@ -94,11 +95,12 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	w.Header().Set("Content-Type", "image/svg+xml")
-	s := svg.New(w)
+	var b bytes.Buffer
+	s := svg.New(&b)
 	s.Start(600, 600)
 	render(depth, s)
 	s.End()
+	display(w, "index", template.HTML(b.String()))
 }
 
 func main() {
