@@ -1,34 +1,25 @@
+// Copyright 2015 Mitchell Kember. Subject to the MIT License.
+
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"github.com/ajstarks/svgo"
+	"github.com/mk12/sfc/curve"
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
+	"os"
 	"strings"
 )
 
-// A Renderer is a function that renders a space-filling curve on an SVG object
-// to a certain depth of recursion.
-type Renderer func(depth int, s *svg.SVG)
-
-// allRenderes maps from URL handles to Renderer functions.
-var allRenderers = map[string]Renderer{
-	"hilbert": renderHilbert,
-	"peano":   renderPeano,
-}
-
-// Default parameter values.
-var (
-	defaultRender = renderHilbert
-	defaultDepth  = 1
+// Default curve options.
+const (
+	defaultCurveName  = "hilbert"
+	defaultCurveDepth = "1"
 )
 
-// Compile templates on startup.
+// Compile all templates on startup.
 var templateSet = template.Must(template.ParseFiles(
 	"templates/header.html",
 	"templates/footer.html",
@@ -36,7 +27,7 @@ var templateSet = template.Must(template.ParseFiles(
 	"templates/404.html",
 ))
 
-// display executes the template with the given name, and passes along data.
+// display finds a template by name and executes it with the given data.
 func display(w http.ResponseWriter, templateName string, data interface{}) {
 	err := templateSet.ExecuteTemplate(w, templateName, data)
 	if err != nil {
@@ -45,9 +36,16 @@ func display(w http.ResponseWriter, templateName string, data interface{}) {
 	}
 }
 
-// pathSegments returns a slice of URL path segments by splitting on slashes.
-// The presence of a leading or trailing slash does not matter.
-func pathSegments(path string) []string {
+// fail logs a failure message and responds with a 404 Not Found status.
+func fail(w http.ResponseWriter, reason string) {
+	log.Println("404 Not Found:", reason)
+	w.WriteHeader(http.StatusNotFound)
+	display(w, "404", nil)
+}
+
+// splitPath returns a slice of URL path segments by splitting on slashes. The
+// presence of a leading or trailing slash does not affect the result.
+func splitPath(path string) []string {
 	segs := strings.Split(path, "/")
 	if len(segs) > 0 && segs[0] == "" {
 		segs = segs[1:]
@@ -58,49 +56,40 @@ func pathSegments(path string) []string {
 	return segs
 }
 
-// notFound responds with a 404 Not Found status after logging a message.
-func notFound(w http.ResponseWriter, reason string) {
-	log.Printf("404 Not Found (%s)\n", reason)
-	w.WriteHeader(http.StatusNotFound)
-	display(w, "404", nil)
+// curveOptions returns the options (name and depth) for the curve as specified
+// in the path. Returns default values if one or both are missing.
+func curveOptions(path string) (name string, depth string) {
+	args := splitPath(path)
+	if len(args) >= 1 {
+		name = args[0]
+	} else {
+		name = defaultCurveName
+	}
+	if len(args) >= 2 {
+		depth = args[1]
+	} else {
+		depth = defaultCurveDepth
+	}
+	return
 }
 
-// mainHandler responds to an HTTP request.
+// mainHandler responds to an HTTP request. If there are no errors, it renders
+// the index page with the desired space-filling curve embedded as an SVG.
 func mainHandler(w http.ResponseWriter, req *http.Request) {
+	log.SetPrefix(fmt.Sprintf("[%s %s] ", req.Method, req.URL.Path))
 	if req.Method != "GET" {
-		notFound(w, "invalid request method")
+		fail(w, "invalid request method")
 		return
 	}
 
-	log.SetPrefix(fmt.Sprintf("[GET %s] ", req.URL.Path))
-	segments := pathSegments(req.URL.Path)
-	render := defaultRender
-	depth := defaultDepth
-
-	if len(segments) >= 1 {
-		if r, ok := allRenderers[segments[0]]; ok {
-			render = r
-		} else {
-			log.Printf("segs: %#v\n", segments)
-			notFound(w, "invalid renderer type")
-			return
-		}
+	name, depth := curveOptions(req.URL.Path)
+	svg, err := curve.SVG(name, depth)
+	if err != nil {
+		fail(w, err.Error())
+		return
 	}
-	if len(segments) >= 2 {
-		if d, err := strconv.Atoi(segments[1]); err == nil && d >= 0 {
-			depth = d
-		} else {
-			notFound(w, "invalid depth")
-			return
-		}
-	}
-
-	var b bytes.Buffer
-	s := svg.New(&b)
-	s.Start(600, 600)
-	render(depth, s)
-	s.End()
-	display(w, "index", template.HTML(b.String()))
+	log.Printf("Rendering curve '%s' at depth %s\n", name, depth)
+	display(w, "index", template.HTML(svg))
 }
 
 func main() {
@@ -108,13 +97,19 @@ func main() {
 
 	port := flag.Int("port", 8080, "localhost port to serve from")
 	flag.Parse()
-	portStr := fmt.Sprintf(":%d", *port)
+	if flag.NArg() > 0 {
+		flag.Usage()
+		os.Exit(1)
+	}
 
-	staticHandler := http.FileServer(http.Dir("static"))
-	staticHandler = http.StripPrefix("/static/", staticHandler)
+	staticHandler := http.StripPrefix(
+		"/static/",
+		http.FileServer(http.Dir("static")),
+	)
 	http.HandleFunc("/", mainHandler)
 	http.Handle("/static/", staticHandler)
 
+	portStr := fmt.Sprintf(":%d", *port)
 	log.Println("=> Serving on http://localhost" + portStr)
 	log.Println("=> Ctrl-C to shutdown server")
 	err := http.ListenAndServe(portStr, nil)
