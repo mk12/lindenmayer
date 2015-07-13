@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/ajstarks/svgo"
 	"strconv"
+	"strings"
 )
 
 // A point is a pair of coordinates in the unit square. Both x and y should be
@@ -67,5 +68,20 @@ func connectDots(dots []point) string {
 	s.Start(500, 500)
 	s.Polyline(xs, ys, "fill:none;stroke:black")
 	s.End()
-	return buf.String()
+	return removeLines(buf.String(), 2)
+}
+
+// removeLines returns a string with the first n lines removed.
+func removeLines(s string, n int) string {
+	for i := 0; i < n; i++ {
+		index := strings.IndexByte(s, '\n')
+		if index == -1 {
+			return s
+		}
+		if index+1 >= len(s) {
+			return ""
+		}
+		s = s[index+1:]
+	}
+	return s
 }
