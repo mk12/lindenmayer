@@ -2,7 +2,28 @@
 
 package curve
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
+
+const epsilon = 1e-10
+
+func samePoint(a, b point) bool {
+	return math.Abs(a.x-b.x) < epsilon && math.Abs(a.y-b.y) < epsilon
+}
+
+func samePoints(s1, s2 []point) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for i := 0; i < len(s1); i++ {
+		if !samePoint(s1[i], s2[i]) {
+			return false
+		}
+	}
+	return true
+}
 
 func TestSVG(t *testing.T) {
 	table := []struct {
@@ -17,7 +38,7 @@ func TestSVG(t *testing.T) {
 	}
 	for i, test := range table {
 		if _, err := SVG(test.name, test.depth); err == nil {
-			t.Errorf("[%d] want error, got nil", i)
+			t.Errorf("[%d] got nil, want error", i)
 		}
 	}
 
@@ -33,7 +54,7 @@ func TestSVG(t *testing.T) {
 func Test_connectDots(t *testing.T) {
 	svg := connectDots([]point{})
 	if svg != "" {
-		t.Errorf("want \"\", got %q", svg)
+		t.Errorf("got %q, want \"\"", svg)
 	}
 
 	list := [][]point{

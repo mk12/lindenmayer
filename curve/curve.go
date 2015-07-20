@@ -27,7 +27,7 @@ var allDrawFns = map[string]drawFn{
 }
 
 // SVG renders a space-filling curve with the given name and depth, and returns
-// it as a string of HTML. Returns the empty string if there is an error.
+// it as a string of SVG data. Returns the empty string if there is an error.
 func SVG(name, depth string) (html string, err error) {
 	n, err := strconv.Atoi(depth)
 	if err != nil {
@@ -47,8 +47,8 @@ func SVG(name, depth string) (html string, err error) {
 	return
 }
 
-// connectDots draws an SVG polygonal line by connecting the dots in the given
-// sequence, and returns it as a string of HTML.
+// connectDots draws a polygonal line by connecting the dots, returning a string
+// of SVG data that can be embedded in HTML.
 func connectDots(dots []point) string {
 	count := len(dots)
 	if count == 0 {
@@ -68,6 +68,9 @@ func connectDots(dots []point) string {
 	s.Start(500, 500)
 	s.Polyline(xs, ys, "fill:none;stroke:black")
 	s.End()
+
+	// SVGo puts a comment on the first line and <?xml> on the second line. The
+	// actual <svg> element begins on the third line.
 	return removeLines(buf.String(), 2)
 }
 
