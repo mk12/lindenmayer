@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -87,26 +88,78 @@ func Test_splitPath(t *testing.T) {
 	}
 }
 
-func Test_curveOptions(t *testing.T) {
+func Test_parseParams(t *testing.T) {
+	d := defaultParams
 	table := []struct {
-		path  string
-		name  string
-		depth string
+		rawurl string
+		params parameters
 	}{
-		{"", "hilbert", "1"},
-		{"/", "hilbert", "1"},
-		{"//", "", "1"},
-		{"///", "", ""},
-		{"/hilbert", "hilbert", "1"},
-		{"/hilbert/2", "hilbert", "2"},
-		{"/peano/", "peano", "1"},
-		{"/peano/12/", "peano", "12"},
+		{"/", d},
+		{"/abc", parameters{
+			name:      "abc",
+			depth:     d.depth,
+			thickness: d.thickness,
+			color:     d.color,
+			precision: d.precision,
+		}},
+		{"/abc/3", parameters{
+			name:      "abc",
+			depth:     "3",
+			thickness: d.thickness,
+			color:     d.color,
+			precision: d.precision,
+		}},
+		{"/?s=4&c=red&p=9", parameters{
+			name:      d.name,
+			depth:     d.depth,
+			thickness: "4",
+			color:     "red",
+			precision: "9",
+		}},
 	}
 	for i, test := range table {
-		name, depth := curveOptions(test.path)
-		if name != test.name || depth != test.depth {
-			t.Errorf("[%d] got (%q, %q), want (%q, %q)",
-				i, name, depth, test.name, test.depth)
+		href, err := url.Parse(test.rawurl)
+		if err != nil {
+			t.Errorf("[%d] could not parse %q", i, test.rawurl)
+			continue
+		}
+
+		params := parseParams(href)
+		if !reflect.DeepEqual(params, test.params) {
+			t.Errorf("[%d] got %#v, want %#v", i, params, test.params)
+		}
+	}
+}
+
+func Test_renderSVG(t *testing.T) {
+	table := []struct {
+		params parameters
+		good   bool
+	}{
+		{defaultParams, true},
+		{parameters{"koch", "1", "1", "black", "1"}, true},
+		{parameters{"", "1", "1", "black", "1"}, false},
+		{parameters{"koch", "", "1", "black", "1"}, false},
+		{parameters{"koch", "1", "1", "", "1"}, false},
+		{parameters{"koch", "1", "", "black", "1"}, false},
+		{parameters{"koch", "1", "1", "black", ""}, false},
+		{parameters{"!@#$", "1", "1", "black", "1"}, false},
+		{parameters{"koch", "-1", "1", "black", "1"}, false},
+		{parameters{"koch", "1", "-1", "red", "1"}, false},
+		{parameters{"koch", "1", "1", "black", "-1"}, false},
+	}
+	for i, test := range table {
+		svg, err := renderSVG(test.params)
+		if test.good {
+			if err != nil {
+				t.Errorf("[%d] unexpected error: %q", i, err)
+			} else if svg == "" {
+				t.Errorf("[%d] got %q, want SVG data", i, svg)
+			}
+		} else {
+			if err == nil {
+				t.Errorf("[%d] expected error", i)
+			}
 		}
 	}
 }
@@ -127,11 +180,11 @@ func Test_mainHandlerGet(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %q", err)
 	}
-	if !bytes.Contains(body, []byte("Space-filling Curves")) {
-		t.Error("index page should include title 'Space-filling Curves'")
+	if !bytes.Contains(body, []byte("Lindenmayer")) {
+		t.Error("index page should include title 'Lindenmayer'")
 	}
-	if !bytes.Contains(buf.Bytes(), []byte("hilbert")) {
-		t.Error("should log about rendering hilbert curve")
+	if !bytes.Contains(buf.Bytes(), []byte("koch")) {
+		t.Error("should log about rendering koch curve")
 	}
 }
 

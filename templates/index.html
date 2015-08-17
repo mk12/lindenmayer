@@ -1,7 +1,11 @@
 {{ define "index" }}
 {{ template "header" . }}
 
-{{ . }}
+<div class="wrapper">
+	{{ .SVG }}
+	<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}">–</a>
+	<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}">+</a>
+</div>
 
 {{ template "footer" . }}
 {{ end }}

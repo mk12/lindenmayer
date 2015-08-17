@@ -1,1 +1,51 @@
 @import url('reset.css');
+@import url(http://fonts.googleapis.com/css?family=Slabo+13px);
+
+body {
+	font: 22px normal 'Slabo 13px', serif;
+	text-align: center;
+}
+
+.wrapper {
+	max-width: 600px;
+	margin: 0 auto;
+	min-height: 600px;
+}
+
+a {
+	color: #000;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #c00;
+}
+
+.topbar {
+	padding: 6px 0 4px;
+	margin-bottom: 40px;
+	background: #ddd;
+	border-bottom: 4px solid #ccc;
+}
+
+h1 {
+	display: inline;
+	font-size: 28px;
+}
+
+footer {
+	margin-top: 50px;
+}
+
+svg {
+	margin: 0 auto;
+	width: 100%;
+}
+
+#IncDepth, #DecDepth {
+	margin-top: 20px;
+	padding: 10px 40px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	background: #ccc;
+}

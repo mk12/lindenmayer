@@ -5,19 +5,46 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mk12/sfc/curve"
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"strings"
+
+	"github.com/mk12/lindenmayer/system"
 )
 
-// Default curve options.
+// parameters are a collection of accepted URL parameters.
+type parameters struct {
+	name, depth, thickness, color, precision string
+}
+
+// pageData contains information used to render templates.
+type pageData struct {
+	Name      string
+	Depth     int
+	PrevDepth int
+	NextDepth int
+	SVG       template.HTML
+}
+
+// Limitations on parameters.
 const (
-	defaultCurveName  = "hilbert"
-	defaultCurveDepth = "1"
+	minimumDepth     = 0
+	minimumPrecision = 1
+	maximumPrecision = 15
 )
+
+// Default parameter values.
+var defaultParams = parameters{
+	name:      "koch",
+	depth:     "2",
+	thickness: "2.2",
+	color:     "black",
+	precision: "3",
+}
 
 // Compile all templates on startup.
 var templateSet = template.Must(template.ParseFiles(
@@ -56,40 +83,101 @@ func splitPath(path string) []string {
 	return segs
 }
 
-// curveOptions returns the options (name and depth) for the curve as specified
-// in the path. Returns default values if one or both are missing.
-func curveOptions(path string) (name string, depth string) {
-	args := splitPath(path)
-	if len(args) >= 1 {
-		name = args[0]
-	} else {
-		name = defaultCurveName
+// parseParams parses the parameters from the URL, and uses defaultParams if
+// there are missing values.
+func parseParams(href *url.URL) parameters {
+	params := defaultParams
+
+	path := splitPath(href.Path)
+	if len(path) >= 1 {
+		params.name = path[0]
 	}
-	if len(args) >= 2 {
-		depth = args[1]
-	} else {
-		depth = defaultCurveDepth
+	if len(path) >= 2 {
+		params.depth = path[1]
 	}
-	return
+
+	query := href.Query()
+	if thickness := query.Get("s"); thickness != "" {
+		params.thickness = thickness
+	}
+	if color := query.Get("c"); color != "" {
+		params.color = color
+	}
+	if precision := query.Get("p"); precision != "" {
+		params.precision = precision
+	}
+
+	return params
 }
 
-// mainHandler responds to an HTTP request. If there are no errors, it renders
-// the index page with the desired space-filling curve embedded as an SVG.
+// renderSVG generates the SVG data for the specified curve.
+func renderSVG(params parameters) (string, error) {
+	sys := system.Named(params.name)
+	if sys == nil {
+		return "", fmt.Errorf("no system named %q", params.name)
+	}
+
+	depth, err := strconv.Atoi(params.depth)
+	if err != nil {
+		return "", err
+	}
+	if depth < minimumDepth || depth > sys.MaxDepth() {
+		return "", fmt.Errorf("invalid depth %d", depth)
+	}
+
+	thickness, err := strconv.ParseFloat(params.thickness, 64)
+	if err != nil {
+		return "", err
+	}
+	if thickness <= 0 {
+		return "", fmt.Errorf("invalid thickness %f", thickness)
+	}
+
+	if params.color == "" {
+		return "", fmt.Errorf("invalid color \"\"")
+	}
+
+	precision, err := strconv.Atoi(params.precision)
+	if err != nil {
+		return "", err
+	}
+	if precision < minimumPrecision || precision > maximumPrecision {
+		return "", fmt.Errorf("invalid precision %d", precision)
+	}
+
+	opts := system.Options{
+		Depth:     depth,
+		Thickness: thickness,
+		Color:     params.color,
+		Precision: precision,
+	}
+	return sys.SVG(&opts), nil
+}
+
+// mainHandler responds to an HTTP request.
 func mainHandler(w http.ResponseWriter, req *http.Request) {
-	log.SetPrefix(fmt.Sprintf("[%s %s] ", req.Method, req.URL.Path))
+	log.SetPrefix(fmt.Sprintf("[%s %s] ", req.Method, req.URL))
 	if req.Method != "GET" {
 		fail(w, "invalid request method")
 		return
 	}
 
-	name, depth := curveOptions(req.URL.Path)
-	svg, err := curve.SVG(name, depth)
+	params := parseParams(req.URL)
+	svg, err := renderSVG(params)
 	if err != nil {
 		fail(w, err.Error())
 		return
 	}
-	log.Printf("Rendering curve '%s' at depth %s\n", name, depth)
-	display(w, "index", template.HTML(svg))
+	depth, _ := strconv.Atoi(params.depth)
+	page := pageData{
+		Name:      params.name,
+		Depth:     depth,
+		PrevDepth: depth - 1,
+		NextDepth: depth + 1,
+		SVG:       template.HTML(svg),
+	}
+	log.Printf("Rendering %+v\n", params)
+	display(w, "index", page)
 }
 
 func main() {
