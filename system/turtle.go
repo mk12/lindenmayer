@@ -29,7 +29,7 @@ func (s *System) initialTurtle(depth int) turtle {
 		step:  stepFactor * math.Pow(s.growth, float64(-depth)),
 		angle: s.angle,
 	}
-	t.rotate(s.start)
+	t.rotate(s.start * float64(depth))
 	return t
 }
 

@@ -4,6 +4,19 @@ package system
 
 import "math"
 
+// Named returns the system with the given name, or nil if it doesn't exist.
+func Named(name string) *System {
+	if sys, ok := namedSystems[name]; ok {
+		return &sys
+	}
+	return nil
+}
+
+// MaxDepth returns the maximum depth the system should be rendered at.
+func (s *System) MaxDepth() int {
+	return s.max - s.skip
+}
+
 // namedSystems contains some common Lindenmayer systems.
 var namedSystems = map[string]System{
 	"koch": {
@@ -66,9 +79,9 @@ var namedSystems = map[string]System{
 		max:    9,
 	},
 	"rings": {
-		axiom: []byte("F-F-F-F"),
+		axiom: []byte("F+F+F+F"),
 		rules: rewriteSet{
-			'F': []byte("FF-F-F-F-F-F+F"),
+			'F': []byte("FF+F+F+F+F+F-F"),
 		},
 		angle:  math.Pi / 2,
 		start:  0,
@@ -120,7 +133,7 @@ var namedSystems = map[string]System{
 			'b': []byte("+Fa+b"),
 		},
 		angle:  math.Pi / 2,
-		start:  0,
+		start:  math.Pi / 4,
 		growth: 1.4,
 		skip:   5,
 		max:    10,
@@ -136,17 +149,4 @@ var namedSystems = map[string]System{
 		skip:   0,
 		max:    4,
 	},
-}
-
-// Named returns the system with the given name, or nil if it doesn't exist.
-func Named(name string) *System {
-	if sys, ok := namedSystems[name]; ok {
-		return &sys
-	}
-	return nil
-}
-
-// MaxDepth returns the maximum depth the system should be rendered at.
-func (s *System) MaxDepth() int {
-	return s.max
 }

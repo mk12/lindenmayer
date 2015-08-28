@@ -13,13 +13,13 @@ type rewriteSet map[byte][]byte
 
 // A System is a representation of a Lindenmayer system (L-system).
 type System struct {
-	axiom  []byte     // Initial state of the system.
-	rules  rewriteSet // Rules for rewriting variables.
-	angle  float64    // Turn angle, in radians.
-	start  float64    // Initial direction, in radians (standard position).
-	growth float64    // Exponential growth rate for increasing depth.
-	skip   int        // Number of initial depths to skip.
-	max    int        // Maximum depth of recursion.
+	axiom []byte     // Initial state of the system.
+	rules rewriteSet // Rules for rewriting variables.
+	angle float64    // Turn angle, in radians.
+	start float64    // Initial direction, in radians (standard position).
+	base  float64    // Base b in y ~ b^x where y is size and x is depth.
+	min   int        // Number of initial depths to skip.
+	max   int        // Maximum depth of recursion.
 }
 
 // render draws the curve for the system at the given depth of recursion. It

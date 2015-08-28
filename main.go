@@ -28,6 +28,7 @@ type pageData struct {
 	PrevDepth int
 	NextDepth int
 	SVG       template.HTML
+	Systems   []string
 }
 
 // Limitations on parameters.
@@ -175,6 +176,7 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		PrevDepth: depth - 1,
 		NextDepth: depth + 1,
 		SVG:       template.HTML(svg),
+		Systems:   []string{"koch", "hilbert", "peano", "gosper", "sierpinski"},
 	}
 	log.Printf("Rendering %+v\n", params)
 	display(w, "index", page)

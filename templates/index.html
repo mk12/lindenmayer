@@ -1,10 +1,25 @@
 {{ define "index" }}
 {{ template "header" . }}
 
-<div class="wrapper">
-	{{ .SVG }}
-	<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}">–</a>
-	<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}">+</a>
+<div class="main">
+	<div class="panel controls">
+		<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}">–</a>
+		<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}">+</a>
+	</div>
+	<div id="curve" class="content">
+		{{ .SVG }}
+	</div>
+	<nav class="panel navigation">
+		<ul>
+			{{ range $name := .Systems }}
+				{{ if eq $name $.Name }}
+					<li class="active">{{ $name }}</li>
+				{{ else }}
+					<li><a href="/{{ $name }}">{{ $name }}</a></li>
+				{{ end }}
+			{{ end }}
+		</ul>
+	</nav>
 </div>
 
 {{ template "footer" . }}

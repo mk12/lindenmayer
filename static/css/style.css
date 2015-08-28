@@ -7,9 +7,100 @@ body {
 }
 
 .wrapper {
-	max-width: 600px;
-	margin: 0 auto;
-	min-height: 600px;
+	min-height: 100vh;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+header {
+	padding: 8px 0 4px;
+	background: #ddd;
+}
+
+footer {
+	padding: 10px 0;
+	background: #ddd;
+	border-top: 4px solid #ccc;
+}
+
+.main {
+	-webkit-flex: 1 0 100%;
+	flex: 1 0 100%;
+
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+}
+
+.not-found {
+	margin: 50px auto;
+}
+
+.content {
+	-webkit-flex: 0 0;
+	flex: 0 0;
+	margin: 5%;
+}
+
+.panel {
+	-webkit-flex: 0 0 auto;
+	flex: 0 0 auto;
+}
+
+.controls {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	background: #ccc;
+}
+
+.controls a {
+	flex: 1 0 auto;
+	padding: 10px 0;
+	background: #eee;
+	margin: 6px 0;
+	font-size: 40px;
+}
+
+.controls a:first-child {
+	margin-right: 3px;
+}
+
+.controls a:last-child {
+	margin-left: 3px;
+}
+
+.controls a:hover {
+	background: #ccc;
+}
+
+.navigation {
+	background: #eee;
+}
+
+.navigation li {
+	border-top: 2px solid #ddd;
+}
+
+.navigation .active {
+	padding: 10px 0;
+	background: #ddd;
+	color: #666;
+}
+
+.navigation a {
+	display: block;
+	padding: 10px 0;
+}
+
+.navigation a:hover {
+	background: #ddd;
 }
 
 a {
@@ -21,31 +112,36 @@ a:hover {
 	color: #c00;
 }
 
-.topbar {
-	padding: 6px 0 4px;
-	margin-bottom: 40px;
-	background: #ddd;
-	border-bottom: 4px solid #ccc;
-}
-
 h1 {
 	display: inline;
 	font-size: 28px;
 }
 
-footer {
-	margin-top: 50px;
+h2 {
+	font-size: 42px;
+	margin-bottom: 10px;
 }
 
 svg {
-	margin: 0 auto;
+	margin: auto;
 	width: 100%;
 }
 
-#IncDepth, #DecDepth {
-	margin-top: 20px;
-	padding: 10px 40px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-	background: #ccc;
+@media all and (min-width: 600px) {
+	.main {
+		-webkit-flex-direction: row;
+		flex-direction: row;
+		-webkit-justify-content: space-between;
+		justify-content: space-between;
+	}
+
+	.navigation {
+		-webkit-order: 1;
+		order: 1;
+	}
+
+	.controls {
+		-webkit-order: 3;
+		order: 3;
+	}
 }
