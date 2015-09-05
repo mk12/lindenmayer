@@ -26,7 +26,7 @@ const stepFactor = 600
 // Returns the turtle to begin with when rendering the system.
 func (s *System) initialTurtle(depth int) turtle {
 	t := turtle{
-		step:  stepFactor * math.Pow(s.growth, float64(-depth)),
+		step:  stepFactor * math.Pow(s.base, float64(-depth)),
 		angle: s.angle,
 	}
 	t.rotate(s.start * float64(depth))

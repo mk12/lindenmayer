@@ -19,7 +19,7 @@ type Options struct {
 
 // SVG renders the system as a curve, returning a string of SVG data.
 func (s *System) SVG(opts *Options) string {
-	segments := s.render(opts.Depth)
+	segments := s.render(s.min + opts.Depth)
 	view := calcViewBox(segments, opts)
 
 	var buf bytes.Buffer

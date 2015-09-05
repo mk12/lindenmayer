@@ -26,7 +26,7 @@ type System struct {
 // returns a list of polygonal lines as a 2D slice of points.
 func (s *System) render(depth int) [][]vector {
 	var buf bytes.Buffer
-	depth += s.skip
+	depth += s.min
 	s.expand(s.axiom, depth, &buf)
 	return s.execute(buf.Bytes(), depth)
 }
