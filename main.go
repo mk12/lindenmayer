@@ -33,6 +33,12 @@ type pageData struct {
 	Systems   []string
 }
 
+// systemNames contains the names of the systems shown in the sidebar.
+var systemNames = []string{
+	"koch", "hilbert", "peano", "gosper", "sierpinski", "rings", "tree",
+	"plant", "willow", "dragon", "island",
+}
+
 // Limitations on parameters.
 const (
 	minimumDepth     = 0
@@ -180,7 +186,7 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		PrevDepth: depth - 1,
 		NextDepth: depth + 1,
 		SVG:       template.HTML(svg),
-		Systems:   []string{"koch", "hilbert", "peano", "gosper", "sierpinski"},
+		Systems:   systemNames,
 	}
 	log.Printf("Rendering %+v\n", params)
 	display(w, "index", page)
