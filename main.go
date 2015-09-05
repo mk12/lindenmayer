@@ -25,6 +25,7 @@ type parameters struct {
 type pageData struct {
 	Name      string
 	Depth     int
+	Query     string
 	HasPrev   bool
 	HasNext   bool
 	PrevDepth int
@@ -178,9 +179,15 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	depth, _ := strconv.Atoi(params.depth)
+	query := "?" + req.URL.RawQuery
+	if query == "?" {
+		query = ""
+	}
+
 	page := pageData{
 		Name:      params.name,
 		Depth:     depth,
+		Query:     query,
 		HasPrev:   depth-1 >= minimumDepth,
 		HasNext:   depth+1 <= system.Named(params.name).MaxDepth(),
 		PrevDepth: depth - 1,

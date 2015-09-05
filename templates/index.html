@@ -4,19 +4,19 @@
 <div class="main">
 	<div class="panel controls">
 		{{ if .HasPrev }}
-			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ .PrevDepth }}">DEC</a>
+			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ .PrevDepth }}{{ .Query }}">DEC</a>
 		{{ else }}
 			<span class="depth disabled">DEC</span>
 		{{ end }}
 		{{ if .HasNext }}
-			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ .NextDepth }}">INC</a>
+			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ .NextDepth }}{{ .Query }}">INC</a>
 		{{ else }}
 			<span class="depth disabled">INC</span>
 		{{ end }}
 
 		<div class="extra">
 			<label for="Thickness">thickness</label>
-			<input id="Thickness" type="range" min="0.5" max="10">
+			<input id="Thickness" type="range" min="0.25" max="10" step="0.25">
 		</div>
 
 		<div class="extra">
@@ -33,7 +33,7 @@
 				{{ if eq $name $.Name }}
 					<li class="active">{{ $name }}</li>
 				{{ else }}
-					<li><a href="/{{ $name }}">{{ $name }}</a></li>
+					<li><a href="/{{ $name }}{{ $.Query }}">{{ $name }}</a></li>
 				{{ end }}
 			{{ end }}
 		</ul>
