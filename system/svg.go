@@ -88,11 +88,6 @@ func calcViewBox(segments [][]vector, opts *Options) viewBox {
 	width := xMax - xMin
 	height := yMax - yMin
 
-	// if width < height {
-	// 	diff := height - width
-	// 	width += diff
-	// 	xMin -= diff / 2
-	// }
 	return viewBox{xMin, yMin, width, height}
 }
 

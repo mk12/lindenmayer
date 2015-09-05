@@ -17,6 +17,7 @@ type System struct {
 	rules rewriteSet // Rules for rewriting variables.
 	angle float64    // Turn angle, in radians.
 	start float64    // Initial direction, in radians (standard position).
+	turn  bool       // Turn initial direction (used for dragon).
 	base  float64    // Base b in y ~ b^x where y is size and x is depth.
 	min   int        // Number of initial depths to skip.
 	max   int        // Maximum depth of recursion.
