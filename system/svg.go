@@ -59,7 +59,7 @@ type viewBox struct {
 }
 
 // paddingFactor is used to add additional padding to the viewBox.
-const paddingFactor = 1.1
+const paddingFactor = 1.5
 
 // calcViewBox returns a viewBox large enough to contain all the points.
 func calcViewBox(segments [][]vector, opts *Options) viewBox {

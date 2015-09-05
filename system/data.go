@@ -146,7 +146,7 @@ var namedSystems = map[string]System{
 		turn:  true,
 		base:  1.4,
 		min:   5,
-		max:   15,
+		max:   10,
 	},
 	"island": {
 		axiom: []byte("F+F+F+F"),
