@@ -8,9 +8,7 @@ body {
 
 .wrapper {
 	min-height: 100vh;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: column;
 	flex-direction: column;
 	justify-content: space-between;
 }
@@ -27,14 +25,10 @@ footer {
 }
 
 .main {
-	-webkit-flex: 1 0 100%;
 	flex: 1 0 100%;
 
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: column;
 	flex-direction: column;
-	-webkit-justify-content: space-between;
 	justify-content: space-between;
 }
 
@@ -43,14 +37,10 @@ footer {
 }
 
 .content {
-	-webkit-flex: 0 0;
-	flex: 0 0;
 	margin: 5%;
 }
 
 .panel {
-	-webkit-flex: 0 0 auto;
-	flex: 0 0 auto;
 }
 
 .controls {
@@ -61,23 +51,20 @@ footer {
 }
 
 .controls a {
-	flex: 1 0 auto;
+	flex: 1;
+	display: block;
 	padding: 10px 0;
 	background: #eee;
-	margin: 6px 0;
-	font-size: 40px;
+	margin: 4px 0;
+	font-size: 30px;
 }
 
 .controls a:first-child {
-	margin-right: 3px;
+	margin-right: 2px;
 }
 
 .controls a:last-child {
-	margin-left: 3px;
-}
-
-.controls a:hover {
-	background: #ccc;
+	margin-left: 2px;
 }
 
 .navigation {
@@ -97,10 +84,6 @@ footer {
 .navigation a {
 	display: block;
 	padding: 10px 0;
-}
-
-.navigation a:hover {
-	background: #ddd;
 }
 
 a {
@@ -129,19 +112,28 @@ svg {
 
 @media all and (min-width: 600px) {
 	.main {
-		-webkit-flex-direction: row;
 		flex-direction: row;
-		-webkit-justify-content: space-between;
 		justify-content: space-between;
 	}
 
 	.navigation {
-		-webkit-order: 1;
 		order: 1;
 	}
 
+	.content {
+		order: 2;
+		margin: 0;
+		align-self: center;
+	}
+
 	.controls {
-		-webkit-order: 3;
 		order: 3;
+		flex-direction: column;
+	}
+
+	.controls a {
+		padding: 0 !important;
+		margin: 0 !important;
+		border: none;
 	}
 }
