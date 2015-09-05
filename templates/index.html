@@ -3,8 +3,8 @@
 
 <div class="main">
 	<div class="panel controls">
-		<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}">DEC</a>
-		<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}">INC</a>
+		<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}"><span class="label">DEC</span></a>
+		<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}"><span class="label">INC</span></a>
 	</div>
 	<div id="curve" class="content">
 		{{ .SVG }}

@@ -16,6 +16,7 @@ body {
 header {
 	padding: 8px 0 4px;
 	background: #ddd;
+	border-bottom: 4px solid #ccc;
 }
 
 footer {
@@ -48,6 +49,7 @@ footer {
 	flex-direction: row;
 	justify-content: space-between;
 	background: #ccc;
+	border-bottom: 4px solid #ccc;
 }
 
 .controls a {
@@ -55,15 +57,14 @@ footer {
 	display: block;
 	padding: 10px 0;
 	background: #eee;
-	margin: 4px 0;
 	font-size: 30px;
 }
 
-.controls a:first-child {
+#DecDepth {
 	margin-right: 2px;
 }
 
-.controls a:last-child {
+#IncDepth {
 	margin-left: 2px;
 }
 
@@ -110,7 +111,7 @@ svg {
 	width: 100%;
 }
 
-@media all and (min-width: 600px) {
+@media all and (min-width: 700px) {
 	.main {
 		flex-direction: row;
 		justify-content: space-between;
@@ -118,22 +119,50 @@ svg {
 
 	.navigation {
 		order: 1;
+		border-right: 4px solid #ccc;
+	}
+
+	.navigation li {
+		border-top: none;
+		border-bottom: 2px solid #ddd;
 	}
 
 	.content {
+		flex: 1;
 		order: 2;
-		margin: 0;
+		margin: 30px;
 		align-self: center;
+	}
+
+	.panel {
+		width: 150px;
 	}
 
 	.controls {
 		order: 3;
 		flex-direction: column;
+		border-bottom: none;
+		border-left: 4px solid #ccc;
 	}
 
 	.controls a {
-		padding: 0 !important;
-		margin: 0 !important;
-		border: none;
+		padding: 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.label {
+		flex: 1;
+	}
+
+	#DecDepth {
+		margin-right: 0;
+		margin-bottom: 2px;
+	}
+
+	#IncDepth {
+		margin-left: 0;
+		margin-top: 2px;
 	}
 }
