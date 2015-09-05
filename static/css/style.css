@@ -14,34 +14,38 @@ body {
 }
 
 header {
+	flex: 0;
 	padding: 8px 0 4px;
 	background: #ddd;
 	border-bottom: 4px solid #ccc;
 }
 
 footer {
+	flex: 0;
 	padding: 10px 0;
 	background: #ddd;
 	border-top: 4px solid #ccc;
 }
 
 .main {
-	flex: 1 0 100%;
-
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
 .not-found {
+	flex: 0;
 	margin: 50px auto;
 }
 
 .content {
+	flex: 1;
 	margin: 5%;
 }
 
 .panel {
+	flex: 0 0 auto;
 	background: #eee;
 }
 
@@ -71,9 +75,6 @@ footer {
 
 .depth:nth-child(2) {
 	border-left: 2px solid #ccc;
-}
-
-.navigation {
 }
 
 .navigation li {
@@ -175,7 +176,7 @@ svg {
 	}
 
 	.depth {
-		flex: 0;
+		flex: 0 0 auto;
 	}
 
 	.depth:first-child {
