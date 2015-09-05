@@ -3,8 +3,26 @@
 
 <div class="main">
 	<div class="panel controls">
-		<a id="DecDepth" href="/{{ .Name }}/{{ .PrevDepth }}"><span class="label">DEC</span></a>
-		<a id="IncDepth" href="/{{ .Name }}/{{ .NextDepth }}"><span class="label">INC</span></a>
+		{{ if .HasPrev }}
+			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ .PrevDepth }}">DEC</a>
+		{{ else }}
+			<span class="depth disabled">DEC</span>
+		{{ end }}
+		{{ if .HasNext }}
+			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ .NextDepth }}">INC</a>
+		{{ else }}
+			<span class="depth disabled">INC</span>
+		{{ end }}
+
+		<div class="extra">
+			<label for="Thickness">thickness</label>
+			<input id="Thickness" type="range" min="0.5" max="10">
+		</div>
+
+		<div class="extra">
+			<label for="Color">colour</label>
+			<input id="Color" type="text">
+		</div>
 	</div>
 	<div id="curve" class="content">
 		{{ .SVG }}
@@ -21,6 +39,8 @@
 		</ul>
 	</nav>
 </div>
+
+<script src="/static/js/script.js"></script>
 
 {{ template "footer" . }}
 {{ end }}

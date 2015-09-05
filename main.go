@@ -25,6 +25,8 @@ type parameters struct {
 type pageData struct {
 	Name      string
 	Depth     int
+	HasPrev   bool
+	HasNext   bool
 	PrevDepth int
 	NextDepth int
 	SVG       template.HTML
@@ -173,6 +175,8 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 	page := pageData{
 		Name:      params.name,
 		Depth:     depth,
+		HasPrev:   depth-1 >= minimumDepth,
+		HasNext:   depth+1 <= system.Named(params.name).MaxDepth(),
 		PrevDepth: depth - 1,
 		NextDepth: depth + 1,
 		SVG:       template.HTML(svg),

@@ -42,17 +42,22 @@ footer {
 }
 
 .panel {
+	background: #eee;
 }
 
 .controls {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	background: #ccc;
 	border-bottom: 4px solid #ccc;
+	user-select: none;
 }
 
-.controls a {
+.extra {
+	display: none;
+}
+
+.depth {
 	flex: 1;
 	display: block;
 	padding: 10px 0;
@@ -60,16 +65,15 @@ footer {
 	font-size: 30px;
 }
 
-#DecDepth {
-	margin-right: 2px;
+.depth:first-child {
+	border-right: 2px solid #ccc;
 }
 
-#IncDepth {
-	margin-left: 2px;
+.depth:nth-child(2) {
+	border-left: 2px solid #ccc;
 }
 
 .navigation {
-	background: #eee;
 }
 
 .navigation li {
@@ -94,6 +98,21 @@ a {
 
 a:hover {
 	color: #c00;
+}
+
+.disabled {
+	color: #aaa;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+input[type=text] {
+	height: 35px;
+	font-size: 24px;
 }
 
 h1 {
@@ -143,26 +162,29 @@ svg {
 		flex-direction: column;
 		border-bottom: none;
 		border-left: 4px solid #ccc;
+		justify-content: flex-start;
 	}
 
-	.controls a {
-		padding: 0;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
+	.extra {
+		margin-top: 30px;
+		display: block;
 	}
 
-	.label {
-		flex: 1;
+	input {
+		width: 130px;
 	}
 
-	#DecDepth {
-		margin-right: 0;
-		margin-bottom: 2px;
+	.depth {
+		flex: 0;
 	}
 
-	#IncDepth {
-		margin-left: 0;
-		margin-top: 2px;
+	.depth:first-child {
+		border: none;
+	}
+
+	.depth:nth-child(2) {
+		border-left: none;
+		border-top: 2px solid #ccc;
+		border-bottom: 2px solid #ccc;
 	}
 }
