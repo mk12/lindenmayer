@@ -22,15 +22,13 @@ type parameters struct {
 
 // pageData contains information used to render templates.
 type pageData struct {
-	Name      string
-	Depth     int
-	Query     string
-	HasPrev   bool
-	HasNext   bool
-	PrevDepth int
-	NextDepth int
-	SVG       template.HTML
-	Systems   []string
+	Name    string
+	Query   string
+	Depth   int
+	HasPrev bool
+	HasNext bool
+	SVG     template.HTML
+	Systems []string
 }
 
 // systemNames contains the names of the systems shown in the sidebar.
@@ -56,12 +54,18 @@ var defaultParams = parameters{
 }
 
 // Compile all templates on startup.
-var templateSet = template.Must(template.ParseFiles(
-	"templates/header.html",
-	"templates/footer.html",
-	"templates/index.html",
-	"templates/404.html",
-))
+var templateSet *template.Template
+
+func init() {
+	add := func(a, b int) int { return a + b }
+	funcs := template.FuncMap{"add": add}
+	paths := []string{"header", "footer", "index", "404"}
+	for i, name := range paths {
+		paths[i] = "templates/" + name + ".html"
+	}
+	templateSet = template.Must(
+		template.New("main").Funcs(funcs).ParseFiles(paths...))
+}
 
 // display finds a template by name and executes it with the given data.
 func display(w http.ResponseWriter, templateName string, data interface{}) {
@@ -184,15 +188,13 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	page := pageData{
-		Name:      params.name,
-		Depth:     depth,
-		Query:     query,
-		HasPrev:   depth-1 >= minimumDepth,
-		HasNext:   depth+1 <= system.Named(params.name).MaxDepth(),
-		PrevDepth: depth - 1,
-		NextDepth: depth + 1,
-		SVG:       template.HTML(svg),
-		Systems:   systemNames,
+		Name:    params.name,
+		Depth:   depth,
+		Query:   query,
+		HasPrev: depth-1 >= minimumDepth,
+		HasNext: depth+1 <= system.Named(params.name).MaxDepth(),
+		SVG:     template.HTML(svg),
+		Systems: systemNames,
 	}
 	log.Printf("Rendering %+v\n", params)
 	display(w, "index", page)

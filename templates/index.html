@@ -4,12 +4,12 @@
 <div class="main">
 	<div class="panel controls">
 		{{ if .HasPrev }}
-			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ .PrevDepth }}{{ .Query }}">DEC</a>
+			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ add .Depth -1 }}{{ .Query }}">DEC</a>
 		{{ else }}
 			<span class="depth disabled">DEC</span>
 		{{ end }}
 		{{ if .HasNext }}
-			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ .NextDepth }}{{ .Query }}">INC</a>
+			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ add .Depth 1 }}{{ .Query }}">INC</a>
 		{{ else }}
 			<span class="depth disabled">INC</span>
 		{{ end }}
@@ -40,6 +40,7 @@
 	</nav>
 </div>
 
+<script>var _depth = {{ .Depth }};</script>
 <script src="/static/js/script.js"></script>
 
 {{ template "footer" . }}
