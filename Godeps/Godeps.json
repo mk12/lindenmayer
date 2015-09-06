@@ -1,0 +1,8 @@
+{
+	"ImportPath": "github.com/mk12/lindenmayer",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
+	"Deps": []
+}
