@@ -3,7 +3,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -202,12 +201,11 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 func main() {
 	log.SetFlags(0) // don't show timestamps in logs
 
-	port := flag.Int("port", 8080, "localhost port to serve from")
-	flag.Parse()
-	if flag.NArg() > 0 {
-		flag.Usage()
-		os.Exit(1)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
+	port = ":" + port
 
 	staticHandler := http.StripPrefix(
 		"/static/",
@@ -216,10 +214,9 @@ func main() {
 	http.HandleFunc("/", mainHandler)
 	http.Handle("/static/", staticHandler)
 
-	portStr := fmt.Sprintf(":%d", *port)
-	log.Println("=> Serving on http://localhost" + portStr)
+	log.Println("=> Serving on http://localhost" + port)
 	log.Println("=> Ctrl-C to shutdown server")
-	err := http.ListenAndServe(portStr, nil)
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		log.Fatalln("ListenAndServe:", err)
 	}
