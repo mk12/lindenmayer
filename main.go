@@ -19,7 +19,12 @@ import (
 
 // parameters are a collection of accepted URL parameters.
 type parameters struct {
-	name, depth, thickness, color, precision string
+	name      string
+	depth     string
+	thickness string
+	color     string
+	precision string
+	onlySVG   bool
 }
 
 // pageData contains information used to render templates.
@@ -56,6 +61,7 @@ var defaultParams = parameters{
 	thickness: "2.2",
 	color:     "black",
 	precision: "3",
+	onlySVG:   false,
 }
 
 // Compile all templates on startup.
@@ -130,6 +136,9 @@ func parseParams(href *url.URL) parameters {
 	if precision := query.Get("p"); precision != "" {
 		params.precision = precision
 	}
+	if onlySVG := query.Get("svg"); onlySVG == "1" {
+		params.onlySVG = true
+	}
 
 	return params
 }
@@ -181,6 +190,10 @@ func renderSVG(params parameters) (string, error) {
 // mainHandler responds to an HTTP request.
 func mainHandler(w http.ResponseWriter, req *http.Request) {
 	log.SetPrefix(fmt.Sprintf("[%s %s] ", req.Method, req.URL))
+	if req.Method != "GET" {
+		fail(w, "invalid request method")
+		return
+	}
 
 	params := parseParams(req.URL)
 	svg, err := renderSVG(params)
@@ -191,10 +204,10 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("Rendering %+v\n", params)
 
-	if req.Method == "POST" {
-		w.Header().Set("Content-Type", "application/xml")
+	if params.onlySVG {
+		w.Header().Set("Content-Type", "image/svg+xml")
 		io.WriteString(w, svg)
-	} else if req.Method == "GET" {
+	} else {
 		depth, _ := strconv.Atoi(params.depth)
 		max := system.Named(params.name).MaxDepth()
 		query := "?" + req.URL.RawQuery
@@ -214,8 +227,6 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 			Systems:   systemNames,
 		}
 		display(w, "index", page)
-	} else {
-		fail(w, "invalid request method")
 	}
 }
 
