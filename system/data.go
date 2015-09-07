@@ -145,7 +145,7 @@ var namedSystems = map[string]System{
 		start: math.Pi / 4,
 		turn:  true,
 		base:  1.4,
-		min:   5,
+		min:   0,
 		max:   10,
 	},
 	"island": {
