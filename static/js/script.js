@@ -94,8 +94,10 @@ window.onload = function() {
 
 	thicknessRange.addEventListener('change', function() {
 		_thickness = thicknessRange.value;
+		var rect = curveDiv.firstElementChild.viewBox.baseVal;
+		var adjusted = _thickness * Math.max(rect.width, rect.height) / 600.0;
 		updateURL();
-		setStyle('stroke-width', _thickness);
+		setStyle('stroke-width', adjusted);
 	});
 
 	extraForm.addEventListener('submit', function(e) {
