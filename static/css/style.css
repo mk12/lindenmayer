@@ -133,17 +133,12 @@ footer {
 
 .navigation li {
 	border-top: 2px solid #ddd;
+	padding: 10px 0;
 }
 
 .navigation .active {
-	padding: 10px 0;
 	background: #ddd;
 	color: #666;
-}
-
-.navigation a {
-	display: block;
-	padding: 10px 0;
 }
 
 a {

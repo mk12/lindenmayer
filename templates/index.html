@@ -40,9 +40,13 @@
 		<ul>
 			{{ range $name := .Systems }}
 				{{ if eq $name $.Name }}
-					<li class="active">{{ $name }}</li>
+					<li class="active">
+						<a class="nav-link disabled" href="#">{{ $name }}</a>
+					</li>
 				{{ else }}
-					<li><a href="/{{ $name }}{{ $.Query }}">{{ $name }}</a></li>
+					<li>
+						<a class="nav-link" href="/{{ $name }}{{ $.Query }}">{{ $name }}</a>
+					</li>
 				{{ end }}
 			{{ end }}
 		</ul>
