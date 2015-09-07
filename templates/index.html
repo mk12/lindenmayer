@@ -14,7 +14,7 @@
 			<span class="depth disabled">INC</span>
 		{{ end }}
 
-		<form action="/{{ .Name }}/{{ .Depth }}" method="get">
+		<form id="ExtraForm" action="/{{ .Name }}/{{ .Depth }}" method="get">
 			<div class="group">
 				<label for="Thickness">thickness</label>
 				<input id="Thickness" name="s" type="range" min="0.25" max="10" step="0.25" value="{{ .Thickness }}">

@@ -1,57 +1,39 @@
-function getQuery() {
-	var query = {};
-	var tokens = window.location.search.substr(1).split('&');
-	for (var i = 0; i < tokens.length; i++) {
-		if (tokens[i] !== undefined && tokens[i] !== '') {
-			var assignment = tokens[i].split('=');
-			var name = decodeURIComponent(assignment[0]);
-			var value = decodeURIComponent(assignment[1]);
-			query[name] = value;
-		}
-	}
-	return query;
-}
-
-function setQuery(query) {
-	var href = window.location.pathname;
-	var i = 0;
-	for (var name in query) {
-		if (query.hasOwnProperty(name) && query[name]) {
-			href += (i === 0) ? '?' : '&';
-			var encName = encodeURIComponent(name);
-			var encValue = encodeURIComponent(query[name]);
-			href += encName + '=' + encValue;
-			i++;
-		}
-	}
-
-	window.location.href = href;
-}
-
 window.onload = function() {
+	var curveDiv = document.getElementById('Curve');
 	var decBtn = document.getElementById('DecDepth');
 	var incBtn = document.getElementById('IncDepth');
+	var extraForm = document.getElementById('ExtraForm');
 	var thicknessRange = document.getElementById('Thickness');
 	var colorField = document.getElementById('Color');
-	var query = getQuery();
+	var submitBtn = document.getElementById('Submit');
 
-	var load = function() {
-		thicknessRange.value = query.s ? query.s : '2';
-		colorField.value = query.c ? query.c : '';
+	var setStyle = function(name, value) {
+		var svg = curveDiv.firstElementChild;
+		var defs = svg.firstElementChild;
+		var style = defs.firstElementChild;
+		var rule = style.firstChild;
+		var regex = new RegExp(name + ':[^;]+');
+		rule.nodeValue = rule.nodeValue.replace(regex, name + ': ' + value);
 	}
 
-	var update = function() {
-		query.s = thicknessRange.value;
-		query.c = colorField.value;
-		setQuery(query);
+	var updateURL = function() {
+		var url = '/' + _NAME + '/' + _depth;
+		url += '?' + 's=' + _thickness + '&c=' + _color;
+		window.history.replaceState(null, document.title, url);
 	}
 
-	load();
+	submitBtn.style.display = 'none';
 
-	thicknessRange.addEventListener('change', update);
-	colorField.addEventListener('keyup', function(e) {
-		if (e.keyCode == 13) {
-			update();
-		}
+	thicknessRange.addEventListener('change', function() {
+		_thickness = thicknessRange.value;
+		setStyle('stroke-width', _thickness);
+		updateURL();
 	});
+
+	extraForm.addEventListener('submit', function(e) {
+		e.preventDefault();
+		_color = colorField.value;
+		setStyle('stroke', _color);
+		updateURL();
+	})
 }
