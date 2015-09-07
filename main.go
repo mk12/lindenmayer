@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/mk12/lindenmayer/system"
 )
@@ -59,7 +60,13 @@ var templateSet *template.Template
 
 func init() {
 	add := func(a, b int) int { return a + b }
-	funcs := template.FuncMap{"add": add}
+	capitalize := func(s string) string {
+		runes := []rune(s)
+		runes[0] = unicode.ToUpper(runes[0])
+		return string(runes)
+	}
+	funcs := template.FuncMap{"add": add, "capitalize": capitalize}
+
 	paths := []string{"header", "footer", "index", "404"}
 	for i, name := range paths {
 		paths[i] = "templates/" + name + ".html"
