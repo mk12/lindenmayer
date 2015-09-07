@@ -89,11 +89,11 @@ var namedSystems = map[string]System{
 			'F': []byte("FF+F+F+F+F+F-F"),
 		},
 		angle: math.Pi / 2,
-		start: 0,
-		turn:  false,
+		start: -37 * math.Pi / 360,
+		turn:  true,
 		base:  2,
 		min:   0,
-		max:   4,
+		max:   5,
 	},
 	"tree": {
 		axiom: []byte("A"),
@@ -146,7 +146,7 @@ var namedSystems = map[string]System{
 		turn:  true,
 		base:  1.4,
 		min:   0,
-		max:   10,
+		max:   15,
 	},
 	"island": {
 		axiom: []byte("F+F+F+F"),
