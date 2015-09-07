@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -170,10 +171,6 @@ func renderSVG(params parameters) (string, error) {
 // mainHandler responds to an HTTP request.
 func mainHandler(w http.ResponseWriter, req *http.Request) {
 	log.SetPrefix(fmt.Sprintf("[%s %s] ", req.Method, req.URL))
-	if req.Method != "GET" {
-		fail(w, "invalid request method")
-		return
-	}
 
 	params := parseParams(req.URL)
 	svg, err := renderSVG(params)
@@ -181,23 +178,31 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		fail(w, err.Error())
 		return
 	}
-	depth, _ := strconv.Atoi(params.depth)
-	query := "?" + req.URL.RawQuery
-	if query == "?" {
-		query = ""
-	}
 
-	page := pageData{
-		Name:    params.name,
-		Depth:   depth,
-		Query:   query,
-		HasPrev: depth-1 >= minimumDepth,
-		HasNext: depth+1 <= system.Named(params.name).MaxDepth(),
-		SVG:     template.HTML(svg),
-		Systems: systemNames,
-	}
 	log.Printf("Rendering %+v\n", params)
-	display(w, "index", page)
+
+	if req.Method == "POST" {
+		w.Header().Set("Content-Type", "application/xml")
+		io.WriteString(w, svg)
+	} else if req.Method == "GET" {
+		depth, _ := strconv.Atoi(params.depth)
+		query := "?" + req.URL.RawQuery
+		if query == "?" {
+			query = ""
+		}
+		page := pageData{
+			Name:      params.name,
+			Query:     query,
+			Depth:     depth,
+			HasPrev:   depth-1 >= minimumDepth,
+			HasNext:   depth+1 <= system.Named(params.name).MaxDepth(),
+			SVG:       template.HTML(svg),
+			Systems:   systemNames,
+		}
+		display(w, "index", page)
+	} else {
+		fail(w, "invalid request method")
+	}
 }
 
 func main() {
