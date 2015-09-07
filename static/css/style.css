@@ -1,5 +1,5 @@
 @import url('reset.css');
-@import url(http://fonts.googleapis.com/css?family=Slabo+13px);
+@import url('http://fonts.googleapis.com/css?family=Slabo+13px');
 
 body {
 	font: 22px normal 'Slabo 13px', serif;
@@ -25,9 +25,9 @@ body {
 
 header {
 	-webkit-box-flex: 0;
-	-webkit-flex: 0;
-	-ms-flex: 0;
-	flex: 0;
+	-webkit-flex: 0 0 auto;
+	-ms-flex: 0 0 auto;
+	flex: 0 0 auto;
 	padding: 8px 0 4px;
 	background: #ddd;
 	border-bottom: 4px solid #ccc;
@@ -35,9 +35,9 @@ header {
 
 footer {
 	-webkit-box-flex: 0;
-	-webkit-flex: 0;
-	-ms-flex: 0;
-	flex: 0;
+	-webkit-flex: 0 0 auto;
+	-ms-flex: 0 0 auto;
+	flex: 0 0 auto;
 	padding: 10px 0;
 	background: #ddd;
 	border-top: 4px solid #ccc;
@@ -65,9 +65,9 @@ footer {
 
 .not-found {
 	-webkit-box-flex: 0;
-	-webkit-flex: 0;
-	-ms-flex: 0;
-	flex: 0;
+	-webkit-flex: 0 0 auto;
+	-ms-flex: 0 0 auto;
+	flex: 0 0 auto;
 	margin: 50px auto;
 }
 
@@ -272,5 +272,21 @@ svg {
 		border-left: none;
 		border-top: 2px solid #ccc;
 		border-bottom: 2px solid #ccc;
+	}
+}
+
+@media all and (min-width: 700px) and (max-height: 649px) {
+	svg {
+		max-height: 480px;
+	}
+}
+
+@media all and (min-width: 700px) and (min-height: 650px) {
+	.wrapper {
+		height: 100vh;
+	}
+
+	svg {
+		max-height: calc(100vh - 170px);
 	}
 }
