@@ -58,7 +58,7 @@ const (
 var defaultParams = parameters{
 	name:      "koch",
 	depth:     "2",
-	thickness: "2.2",
+	thickness: "3",
 	color:     "black",
 	precision: "3",
 	onlySVG:   false,
