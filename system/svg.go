@@ -5,6 +5,7 @@ package system
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -21,7 +22,7 @@ type Options struct {
 func (s *System) SVG(opts *Options) string {
 	segments := s.render(s.min + opts.Depth)
 	view := calcViewBox(segments, opts)
-	thickness := opts.Thickness * view.w / stepFactor
+	thickness := opts.Thickness * math.Max(view.w, view.h) / stepFactor
 
 	var buf bytes.Buffer
 	fmt.Fprintf(
