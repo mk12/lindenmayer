@@ -108,7 +108,7 @@ footer {
 	user-select: none;
 }
 
-.extra {
+.group {
 	display: none;
 }
 
@@ -248,7 +248,7 @@ svg {
 		justify-content: flex-start;
 	}
 
-	.extra {
+	.group {
 		margin-top: 30px;
 		display: block;
 	}
