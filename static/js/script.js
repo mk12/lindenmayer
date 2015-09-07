@@ -6,17 +6,19 @@ window.onload = function() {
 	var thicknessRange = document.getElementById('Thickness');
 	var colorField = document.getElementById('Color');
 	var submitBtn = document.getElementById('Submit');
+	var navLinks = document.getElementsByClassName('nav-link');
 
 	var getURL = function(name, depth, onlySVG) {
-		var url = '/' + name + '/' + depth;
-		var hasThickness = _thickness !== '3';
-		var hasColor = _color !== 'black';
+		var url = '/' + name;
+		if (depth !== null) {
+			url += '/' + depth;
+		}
 
 		params = [];
-		if (hasThickness) {
+		if (_thickness !== '3') {
 			params.push('t=' + encodeURIComponent(_thickness));
 		}
-		if (hasColor) {
+		if (_color !== 'black') {
 			params.push('c=' + encodeURIComponent(_color));
 		}
 		if (onlySVG) {
@@ -34,7 +36,7 @@ window.onload = function() {
 		window.history.replaceState(null, document.title, url);
 	}
 
-	var updateLinks = function() {
+	var updateDecInc = function() {
 		if (_depth > 0) {
 			decBtn.className = 'depth';
 			decBtn.href = getURL(_NAME, _depth - 1, false);
@@ -50,8 +52,13 @@ window.onload = function() {
 			incBtn.className = 'depth disabled';
 			incBtn.href = '#';
 		}
+	}
 
-		// TODO: update navigation links
+	var updateNavLinks = function() {
+		for (var i = 0; i < navLinks.length; i++) {
+			link = navLinks[i];
+			link.href = getURL(link.innerHTML, null, false);
+		}
 	}
 
 	var reloadSVG = function() {
@@ -81,7 +88,7 @@ window.onload = function() {
 		_depth -= 1;
 		reloadSVG();
 		updateURL();
-		updateLinks();
+		updateDecInc();
 	});
 
 	incBtn.addEventListener('click', function(e) {
@@ -89,7 +96,7 @@ window.onload = function() {
 		_depth += 1;
 		reloadSVG();
 		updateURL();
-		updateLinks();
+		updateDecInc();
 	});
 
 	thicknessRange.addEventListener('change', function() {
@@ -97,6 +104,7 @@ window.onload = function() {
 		var rect = curveDiv.firstElementChild.viewBox.baseVal;
 		var adjusted = _thickness * Math.max(rect.width, rect.height) / 600.0;
 		updateURL();
+		updateNavLinks();
 		setStyle('stroke-width', adjusted);
 	});
 
@@ -104,6 +112,7 @@ window.onload = function() {
 		e.preventDefault();
 		_color = colorField.value;
 		updateURL();
+		updateNavLinks();
 		setStyle('stroke', _color);
 	})
 }
