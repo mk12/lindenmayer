@@ -16,15 +16,15 @@
 
 		<div class="extra">
 			<label for="Thickness">thickness</label>
-			<input id="Thickness" type="range" min="0.25" max="10" step="0.25">
+			<input id="Thickness" type="range" min="0.25" max="10" step="0.25" value="{{ .Thickness }}">
 		</div>
 
 		<div class="extra">
 			<label for="Color">colour</label>
-			<input id="Color" type="text">
+			<input id="Color" type="text" value="{{ .Color }}">
 		</div>
 	</div>
-	<div id="curve" class="content">
+	<div id="Curve" class="content">
 		{{ .SVG }}
 	</div>
 	<nav class="panel navigation">
@@ -40,7 +40,13 @@
 	</nav>
 </div>
 
-<script>var _depth = {{ .Depth }};</script>
+<script>
+	var _NAME = '{{ .Name }}';
+	var _MAX_DEPTH = '{{ .MaxDepth }}';
+	var _depth = {{ .Depth }};
+	var _thickness = '{{ .Thickness }}';
+	var _color = '{{ .Color }}';
+</script>
 <script src="/static/js/script.js"></script>
 
 {{ template "footer" . }}

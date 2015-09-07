@@ -24,13 +24,16 @@ type parameters struct {
 
 // pageData contains information used to render templates.
 type pageData struct {
-	Name    string
-	Query   string
-	Depth   int
-	HasPrev bool
-	HasNext bool
-	SVG     template.HTML
-	Systems []string
+	Name      string
+	Query     string
+	Thickness string
+	Color     string
+	Depth     int
+	MaxDepth  int
+	HasPrev   bool
+	HasNext   bool
+	SVG       template.HTML
+	Systems   []string
 }
 
 // systemNames contains the names of the systems shown in the sidebar.
@@ -193,16 +196,20 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		io.WriteString(w, svg)
 	} else if req.Method == "GET" {
 		depth, _ := strconv.Atoi(params.depth)
+		max := system.Named(params.name).MaxDepth()
 		query := "?" + req.URL.RawQuery
 		if query == "?" {
 			query = ""
 		}
 		page := pageData{
 			Name:      params.name,
+			Thickness: params.thickness,
+			Color:     params.color,
 			Query:     query,
 			Depth:     depth,
+			MaxDepth:  max,
 			HasPrev:   depth-1 >= minimumDepth,
-			HasNext:   depth+1 <= system.Named(params.name).MaxDepth(),
+			HasNext:   depth+1 <= max,
 			SVG:       template.HTML(svg),
 			Systems:   systemNames,
 		}
