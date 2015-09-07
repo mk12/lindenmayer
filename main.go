@@ -136,7 +136,7 @@ func parseParams(href *url.URL) parameters {
 	if precision := query.Get("p"); precision != "" {
 		params.precision = precision
 	}
-	if onlySVG := query.Get("svg"); onlySVG == "1" {
+	if onlySVG := query.Get("svg"); onlySVG != "" {
 		params.onlySVG = true
 	}
 

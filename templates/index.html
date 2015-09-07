@@ -16,7 +16,7 @@
 			<a id="IncDepth" class="depth disabled" href="#">INC</a>
 		{{ end }}
 
-		<form id="ExtraForm" action="/{{ .Name }}/{{ .Depth }}" method="get">
+		<form id="ExtraForm" class="wide-only" action="/{{ .Name }}/{{ .Depth }}" method="get">
 			<div class="group">
 				<label for="Thickness">thickness</label>
 				<input id="Thickness" name="t" type="range" min="0.25" max="10"
@@ -28,8 +28,12 @@
 				<input id="Color" name="c" type="text" value="{{ .Color }}">
 			</div>
 
-			<div class="group">
-				<input id="Submit" type="submit" value="Update">
+			<div id="Submit" class="group">
+				<input type="submit" value="Update">
+			</div>
+
+			<div class="group lone-button">
+				<a id="Download" href="#" target="_blank">Download</a>
 			</div>
 		</form>
 	</div>

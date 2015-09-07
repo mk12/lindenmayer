@@ -5,7 +5,8 @@ window.onload = function() {
 	var extraForm = document.getElementById('ExtraForm');
 	var thicknessRange = document.getElementById('Thickness');
 	var colorField = document.getElementById('Color');
-	var submitBtn = document.getElementById('Submit');
+	var submitDiv = document.getElementById('Submit');
+	var downloadBtn = document.getElementById('Download');
 	var navLinks = document.getElementsByClassName('nav-link');
 
 	var getURL = function(name, depth, onlySVG) {
@@ -100,7 +101,7 @@ window.onload = function() {
 		rule.nodeValue = rule.nodeValue.replace(regex, name + ': ' + value);
 	}
 
-	submitBtn.style.display = 'none';
+	submitDiv.style.display = 'none';
 
 	decBtn.addEventListener('click', function(e) {
 		e.preventDefault();
@@ -133,5 +134,10 @@ window.onload = function() {
 		updateURL();
 		updateNavLinks();
 		setStyle('stroke', _color);
-	})
+	});
+
+	downloadBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		window.open(getURL(_NAME, _depth, true), '_blank');
+	});
 }
