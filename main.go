@@ -127,7 +127,7 @@ func parseParams(href *url.URL) parameters {
 	}
 
 	query := href.Query()
-	if thickness := query.Get("s"); thickness != "" {
+	if thickness := query.Get("t"); thickness != "" {
 		params.thickness = thickness
 	}
 	if color := query.Get("c"); color != "" {

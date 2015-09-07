@@ -109,7 +109,7 @@ func Test_parseParams(t *testing.T) {
 			color:     d.color,
 			precision: d.precision,
 		}},
-		{"/?s=4&c=red&p=9", parameters{
+		{"/?t=4&c=red&p=9", parameters{
 			name:      d.name,
 			depth:     d.depth,
 			thickness: "4",
