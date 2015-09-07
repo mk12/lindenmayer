@@ -29,14 +29,16 @@ type parameters struct {
 
 // pageData contains information used to render templates.
 type pageData struct {
-	Name      string
-	Query     string
-	Thickness string
-	Color     string
-	Depth     int
-	MaxDepth  int
-	SVG       template.HTML
-	Systems   []string
+	Name       string
+	Query      string
+	Thickness  string
+	Color      string
+	Depth      int
+	MaxDepth   int
+	StepFactor float64
+	PadFactor  float64
+	SVG        template.HTML
+	Systems    []string
 }
 
 // systemNames contains the names of the systems shown in the sidebar.
@@ -213,14 +215,16 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 			query = ""
 		}
 		page := pageData{
-			Name:      params.name,
-			Thickness: params.thickness,
-			Color:     params.color,
-			Query:     query,
-			Depth:     depth,
-			MaxDepth:  max,
-			SVG:       template.HTML(svg),
-			Systems:   systemNames,
+			Name:       params.name,
+			Thickness:  params.thickness,
+			Color:      params.color,
+			Query:      query,
+			Depth:      depth,
+			MaxDepth:   max,
+			StepFactor: system.StepFactor,
+			PadFactor:  system.PadFactor,
+			SVG:        template.HTML(svg),
+			Systems:    systemNames,
 		}
 		display(w, "index", page)
 	}

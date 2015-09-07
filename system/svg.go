@@ -22,7 +22,7 @@ type Options struct {
 func (s *System) SVG(opts *Options) string {
 	segments := s.render(s.min + opts.Depth)
 	view := calcViewBox(segments, opts)
-	thickness := opts.Thickness * math.Max(view.w, view.h) / stepFactor
+	thickness := opts.Thickness * math.Max(view.w, view.h) / StepFactor
 
 	var buf bytes.Buffer
 	fmt.Fprintf(
@@ -57,8 +57,8 @@ type viewBox struct {
 	x, y, w, h float64
 }
 
-// paddingFactor is used to add additional padding to the viewBox.
-const paddingFactor = 1.5
+// PadFactor is used to add additional padding to the viewBox.
+const PadFactor = 0.8
 
 // calcViewBox returns a viewBox large enough to contain all the points.
 func calcViewBox(segments [][]vector, opts *Options) viewBox {
@@ -78,7 +78,7 @@ func calcViewBox(segments [][]vector, opts *Options) viewBox {
 		}
 	}
 
-	edge := paddingFactor * opts.Thickness / 2
+	edge := PadFactor * opts.Thickness
 	xMin -= edge
 	yMin -= edge
 	xMax += edge

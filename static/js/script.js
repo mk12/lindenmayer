@@ -31,6 +31,16 @@ window.onload = function() {
 		return url;
 	}
 
+	var viewBoxRect = function() {
+		return curveDiv.firstElementChild.viewBox.baseVal;
+	}
+
+	var adjustedThickness = function() {
+		var rect = viewBoxRect();
+		var largest = Math.max(rect.width, rect.height);
+		return _thickness * largest / _STEP_FACTOR;
+	}
+
 	var updateURL = function() {
 		var url = getURL(_NAME, _depth, false);
 		window.history.replaceState(null, document.title, url);
@@ -59,6 +69,15 @@ window.onload = function() {
 			link = navLinks[i];
 			link.href = getURL(link.innerHTML, null, false);
 		}
+	}
+
+	var updateViewBox = function(oldThickness) {
+		var rect = viewBoxRect();
+		var edge = _PAD_FACTOR * (_thickness - oldThickness);
+		rect.x -= edge;
+		rect.y -= edge;
+		rect.width += edge * 2;
+		rect.height += edge * 2;
 	}
 
 	var reloadSVG = function() {
@@ -100,12 +119,12 @@ window.onload = function() {
 	});
 
 	thicknessRange.addEventListener('change', function() {
+		var oldThickness = _thickness;
 		_thickness = thicknessRange.value;
-		var rect = curveDiv.firstElementChild.viewBox.baseVal;
-		var adjusted = _thickness * Math.max(rect.width, rect.height) / 600.0;
 		updateURL();
 		updateNavLinks();
-		setStyle('stroke-width', adjusted);
+		setStyle('stroke-width', adjustedThickness());
+		updateViewBox(oldThickness);
 	});
 
 	extraForm.addEventListener('submit', function(e) {

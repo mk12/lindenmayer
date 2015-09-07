@@ -18,15 +18,15 @@ type turtle struct {
 	angle float64 // Turning angle, in radians.
 }
 
-// stepFactor is a rought estimate of how far the turtle should travel. It is
+// StepFactor is a rought estimate of how far the turtle should travel. It is
 // used to set the turtle's step such that its position always stays near this
 // order of magnitude.
-const stepFactor = 600
+const StepFactor = 600
 
 // Returns the turtle to begin with when rendering the system.
 func (s *System) initialTurtle(depth int) turtle {
 	t := turtle{
-		step:  stepFactor * math.Pow(s.base, float64(-depth)),
+		step:  StepFactor * math.Pow(s.base, float64(-depth)),
 		angle: s.angle,
 	}
 	if s.turn {
