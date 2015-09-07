@@ -14,15 +14,21 @@
 			<span class="depth disabled">INC</span>
 		{{ end }}
 
-		<div class="extra">
-			<label for="Thickness">thickness</label>
-			<input id="Thickness" type="range" min="0.25" max="10" step="0.25" value="{{ .Thickness }}">
-		</div>
+		<form action="/{{ .Name }}/{{ .Depth }}" method="get">
+			<div class="extra">
+				<label for="Thickness">thickness</label>
+				<input id="Thickness" name="s" type="range" min="0.25" max="10" step="0.25" value="{{ .Thickness }}">
+			</div>
 
-		<div class="extra">
-			<label for="Color">colour</label>
-			<input id="Color" type="text" value="{{ .Color }}">
-		</div>
+			<div class="extra">
+				<label for="Color">colour</label>
+				<input id="Color" name="c" type="text" value="{{ .Color }}">
+			</div>
+
+			<div class="extra">
+				<input type="submit" value="Update">
+			</div>
+		</form>
 	</div>
 	<div id="Curve" class="content">
 		{{ .SVG }}
