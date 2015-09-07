@@ -35,8 +35,6 @@ type pageData struct {
 	Color     string
 	Depth     int
 	MaxDepth  int
-	HasPrev   bool
-	HasNext   bool
 	SVG       template.HTML
 	Systems   []string
 }
@@ -221,8 +219,6 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 			Query:     query,
 			Depth:     depth,
 			MaxDepth:  max,
-			HasPrev:   depth-1 >= minimumDepth,
-			HasNext:   depth+1 <= max,
 			SVG:       template.HTML(svg),
 			Systems:   systemNames,
 		}

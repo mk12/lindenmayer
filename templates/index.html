@@ -3,12 +3,12 @@
 
 <div class="main">
 	<div class="panel controls">
-		{{ if .HasPrev }}
+		{{ if gt .Depth 0 }}
 			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ add .Depth -1 }}{{ .Query }}">DEC</a>
 		{{ else }}
 			<span class="depth disabled">DEC</span>
 		{{ end }}
-		{{ if .HasNext }}
+		{{ if lt .Depth .MaxDepth }}
 			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ add .Depth 1 }}{{ .Query }}">INC</a>
 		{{ else }}
 			<span class="depth disabled">INC</span>
