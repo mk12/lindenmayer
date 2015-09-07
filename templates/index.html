@@ -4,20 +4,23 @@
 <div class="main">
 	<div class="panel controls">
 		{{ if gt .Depth 0 }}
-			<a id="DecDepth" class="depth" href="/{{ .Name }}/{{ add .Depth -1 }}{{ .Query }}">DEC</a>
+			<a id="DecDepth" class="depth"
+				href="/{{ .Name }}/{{ add .Depth -1}}{{ .Query }}">DEC</a>
 		{{ else }}
-			<span class="depth disabled">DEC</span>
+			<a id="DecDepth" class="depth disabled" href="#">DEC</a>
 		{{ end }}
 		{{ if lt .Depth .MaxDepth }}
-			<a id="IncDepth" class="depth" href="/{{ .Name }}/{{ add .Depth 1 }}{{ .Query }}">INC</a>
+			<a id="IncDepth" class="depth"
+				href="/{{ .Name }}/{{ add .Depth 1}}{{ .Query }}">INC</a>
 		{{ else }}
-			<span class="depth disabled">INC</span>
+			<a id="IncDepth" class="depth disabled" href="#">INC</a>
 		{{ end }}
 
 		<form id="ExtraForm" action="/{{ .Name }}/{{ .Depth }}" method="get">
 			<div class="group">
 				<label for="Thickness">thickness</label>
-				<input id="Thickness" name="t" type="range" min="0.25" max="10" step="0.25" value="{{ .Thickness }}">
+				<input id="Thickness" name="t" type="range" min="0.25" max="10"
+					step="0.25" value="{{ .Thickness }}">
 			</div>
 
 			<div class="group">

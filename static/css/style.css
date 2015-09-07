@@ -151,12 +151,13 @@ a {
 	text-decoration: none;
 }
 
-a:hover {
+a:not(.disabled):hover {
 	color: #c00;
 }
 
 .disabled {
 	color: #aaa;
+	pointer-events: none;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
