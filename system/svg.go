@@ -23,6 +23,7 @@ func (s *System) SVG(opts *Options) string {
 	segments := s.render(s.min + opts.Depth)
 	view := calcViewBox(segments, opts)
 	thickness := opts.Thickness * math.Max(view.w, view.h) / StepFactor
+	p := fmtPrecision(opts.Precision)
 
 	var buf bytes.Buffer
 	fmt.Fprintf(
@@ -30,20 +31,13 @@ func (s *System) SVG(opts *Options) string {
 		"<svg xmlns='http://www.w3.org/2000/svg' viewBox='%s %s %s %s'>"+
 			"<defs><style>polyline { fill: none; stroke-linecap: square; "+
 			"stroke-width: %s; stroke: %s; }</style></defs>",
-		precise(view.x, opts.Precision),
-		precise(view.y, opts.Precision),
-		precise(view.w, opts.Precision),
-		precise(view.h, opts.Precision),
-		precise(thickness, opts.Precision),
-		opts.Color,
+		p(view.x), p(view.y), p(view.w), p(view.h), p(thickness), opts.Color,
 	)
 
 	for _, points := range segments {
 		buf.WriteString("<polyline points='")
 		for _, pt := range points {
-			x := precise(pt.x, opts.Precision)
-			y := precise(pt.y, opts.Precision)
-			fmt.Fprintf(&buf, "%s,%s ", x, y)
+			fmt.Fprintf(&buf, "%s,%s ", p(pt.x), p(pt.y))
 		}
 		buf.WriteString("'/>")
 	}
@@ -90,11 +84,13 @@ func calcViewBox(segments [][]vector, opts *Options) viewBox {
 	return viewBox{xMin, yMin, width, height}
 }
 
-// precise returns a float formatted as a string with the given number of
-// decimal places, omitting trailing zeros.
-func precise(f float64, precision int) string {
-	str := strconv.FormatFloat(f, 'f', precision, 64)
-	str = strings.TrimRight(str, "0")
-	str = strings.TrimRight(str, ".")
-	return str
+// fmtPrecision returns a function that formats floats as strings with the given
+// number of decimal places, omitting trailing zeros.
+func fmtPrecision(precision int) func(float64) string {
+	return func(f float64) string {
+		str := strconv.FormatFloat(f, 'f', precision, 64)
+		str = strings.TrimRight(str, "0")
+		str = strings.TrimRight(str, ".")
+		return str
+	}
 }
