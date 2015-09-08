@@ -56,7 +56,7 @@ func (s *System) cacheRender(depth int) [][]vector {
 	if os.IsNotExist(err) {
 		log.Println("Cache miss:", filename)
 		segments := s.render(depth)
-		file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+		file, err := os.Create(filename)
 		if err != nil {
 			log.Println("File create error:", err)
 			return segments
