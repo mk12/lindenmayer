@@ -132,10 +132,10 @@ window.onload = function() {
 	};
 
 	var handleColor = function() {
-		_color = colorField.value;
+		_color = colorField.value.trim();
 		updateURL();
 		updateNavLinks();
-		setStyle('stroke', _color);
+		setStyle('stroke', _color || 'black');
 	};
 
 	var hijack = function(fn) {
