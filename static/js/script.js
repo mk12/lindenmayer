@@ -9,6 +9,8 @@ window.onload = function() {
 	var downloadBtn = document.getElementById('Download');
 	var navLinks = document.getElementsByClassName('nav-link');
 
+	var decIncLocked = false;
+
 	var getURL = function(name, depth, onlySVG) {
 		var url = '/' + name;
 		if (depth !== null) {
@@ -82,11 +84,15 @@ window.onload = function() {
 	}
 
 	var reloadSVG = function() {
+		decIncLocked = true;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', getURL(_NAME, _depth, true), true);
 		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				curveDiv.innerHTML = xhr.responseText;
+			if (xhr.readyState === 4) {
+				decIncLocked = false;
+				if (xhr.status === 200) {
+					curveDiv.innerHTML = xhr.responseText;
+				}
 			}
 		}
 		xhr.send();
@@ -101,23 +107,22 @@ window.onload = function() {
 		rule.nodeValue = rule.nodeValue.replace(regex, name + ': ' + value);
 	}
 
+	var decIncClick = function(delta) {
+		return function(e) {
+			e.preventDefault();
+			if (!decIncLocked) {
+				_depth += delta;
+				reloadSVG();
+				updateURL();
+				updateDecInc();
+			}
+		}
+	}
+
 	submitDiv.style.display = 'none';
 
-	decBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		_depth -= 1;
-		reloadSVG();
-		updateURL();
-		updateDecInc();
-	});
-
-	incBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		_depth += 1;
-		reloadSVG();
-		updateURL();
-		updateDecInc();
-	});
+	decBtn.addEventListener('click', decIncClick(-1));
+	incBtn.addEventListener('click', decIncClick(+1));
 
 	thicknessRange.addEventListener('change', function() {
 		var oldThickness = _thickness;
