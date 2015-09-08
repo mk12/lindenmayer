@@ -32,22 +32,22 @@ window.onload = function() {
 		}
 
 		return url;
-	}
+	};
 
 	var viewBoxRect = function() {
 		return curveDiv.firstElementChild.viewBox.baseVal;
-	}
+	};
 
 	var adjustedThickness = function() {
 		var rect = viewBoxRect();
 		var largest = Math.max(rect.width, rect.height);
 		return _thickness * largest / _STEP_FACTOR;
-	}
+	};
 
 	var updateURL = function() {
 		var url = getURL(_NAME, _depth, false);
 		window.history.replaceState(null, document.title, url);
-	}
+	};
 
 	var updateDecInc = function() {
 		if (_depth > 0) {
@@ -65,14 +65,14 @@ window.onload = function() {
 			incBtn.className = 'depth disabled';
 			incBtn.href = '#';
 		}
-	}
+	};
 
 	var updateNavLinks = function() {
 		for (var i = 0; i < navLinks.length; i++) {
 			link = navLinks[i];
 			link.href = getURL(link.innerHTML, null, false);
 		}
-	}
+	};
 
 	var updateViewBox = function(oldThickness) {
 		var rect = viewBoxRect();
@@ -81,7 +81,7 @@ window.onload = function() {
 		rect.y -= edge;
 		rect.width += edge * 2;
 		rect.height += edge * 2;
-	}
+	};
 
 	var reloadSVG = function() {
 		decIncLocked = true;
@@ -96,7 +96,7 @@ window.onload = function() {
 			}
 		}
 		xhr.send();
-	}
+	};
 
 	var setStyle = function(name, value) {
 		var svg = curveDiv.firstElementChild;
