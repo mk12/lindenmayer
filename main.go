@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/mk12/lindenmayer/system"
@@ -40,6 +41,11 @@ type pageData struct {
 	SVG        template.HTML
 	Systems    []string
 }
+
+// modifiedTime is the time this program was last changed in a way that affects
+// the client. It should be updated to the current time to prevent browsers from
+// using stale cached pages.
+var modifiedTime = time.Date(2015, time.September, 8, 18, 5, 0, 0, time.UTC)
 
 // systemNames contains the names of the systems shown in the sidebar.
 var systemNames = []string{
@@ -209,6 +215,14 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 		fail(w, "invalid request method")
 		return
 	}
+
+	ifModSince := req.Header.Get("If-Modified-Since")
+	cacheTime, err := time.Parse(http.TimeFormat, ifModSince)
+	if err == nil && modifiedTime.Unix() <= cacheTime.Unix() {
+		w.WriteHeader(http.StatusNotModified)
+		return
+	}
+	w.Header().Set("Last-Modified", modifiedTime.Format(http.TimeFormat))
 
 	params := parseParams(req.URL)
 	log.Printf("Rendering %+v\n", params)
