@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,7 +19,20 @@ func Test_display200(t *testing.T) {
 	log.SetOutput(&buf)
 	w := httptest.NewRecorder()
 
-	display(w, "index", "HELLO")
+	page := pageData{
+		Name:       "koch",
+		Thickness:  "3",
+		Color:      "black",
+		Query:      "",
+		Depth:      5,
+		MaxDepth:   10,
+		StepFactor: 500,
+		PadFactor:  1.2,
+		SVG:        template.HTML("<svg>HELLO</svg>"),
+		Systems:    []string{},
+	}
+
+	display(w, "index", page)
 	if w.Code != http.StatusOK {
 		t.Errorf("got %d, want http.StatusOK", w.Code)
 	}
@@ -71,19 +85,25 @@ func Test_splitPath(t *testing.T) {
 	table := []struct {
 		path string
 		segs []string
+		ext  string
 	}{
-		{"", []string{}},
-		{"/", []string{}},
-		{"//", []string{""}},
-		{"foo/bar/baz", []string{"foo", "bar", "baz"}},
-		{"/foo/bar/baz", []string{"foo", "bar", "baz"}},
-		{"foo/bar/baz/", []string{"foo", "bar", "baz"}},
-		{"/foo/bar/baz/", []string{"foo", "bar", "baz"}},
+		{"", []string{}, ""},
+		{"/", []string{}, ""},
+		{"//", []string{""}, ""},
+		{"foo/bar/baz", []string{"foo", "bar", "baz"}, ""},
+		{"/foo/bar/baz", []string{"foo", "bar", "baz"}, ""},
+		{"foo/bar/baz/", []string{"foo", "bar", "baz"}, ""},
+		{"/foo/bar/baz/", []string{"foo", "bar", "baz"}, ""},
+		{".", []string{}, ""},
+		{".html", []string{}, "html"},
+		{"/a/b.svg", []string{"a", "b"}, "svg"},
+		{"/a/b/.svg/", []string{"a", "b"}, "svg"},
 	}
 	for i, test := range table {
-		result := splitPath(test.path)
-		if !reflect.DeepEqual(result, test.segs) {
-			t.Errorf("[%d] got %#v, want %#v", i, result, test.segs)
+		segs, ext := splitPath(test.path)
+		if !reflect.DeepEqual(segs, test.segs) || ext != test.ext {
+			t.Errorf("[%d] got (%#v, %q), want (%#v, %q)",
+				i, segs, ext, test.segs, test.ext)
 		}
 	}
 }
@@ -101,6 +121,7 @@ func Test_parseParams(t *testing.T) {
 			thickness: d.thickness,
 			color:     d.color,
 			precision: d.precision,
+			onlySVG:   d.onlySVG,
 		}},
 		{"/abc/3", parameters{
 			name:      "abc",
@@ -108,6 +129,7 @@ func Test_parseParams(t *testing.T) {
 			thickness: d.thickness,
 			color:     d.color,
 			precision: d.precision,
+			onlySVG:   d.onlySVG,
 		}},
 		{"/?t=4&c=red&p=9", parameters{
 			name:      d.name,
@@ -115,6 +137,15 @@ func Test_parseParams(t *testing.T) {
 			thickness: "4",
 			color:     "red",
 			precision: "9",
+			onlySVG:   d.onlySVG,
+		}},
+		{"/xyz/7.svg", parameters{
+			name:      "xyz",
+			depth:     "7",
+			thickness: d.thickness,
+			color:     d.color,
+			precision: d.precision,
+			onlySVG:   true,
 		}},
 	}
 	for i, test := range table {
@@ -137,16 +168,16 @@ func Test_renderSVG(t *testing.T) {
 		good   bool
 	}{
 		{defaultParams, true},
-		{parameters{"koch", "1", "1", "black", "1"}, true},
-		{parameters{"", "1", "1", "black", "1"}, false},
-		{parameters{"koch", "", "1", "black", "1"}, false},
-		{parameters{"koch", "1", "1", "", "1"}, false},
-		{parameters{"koch", "1", "", "black", "1"}, false},
-		{parameters{"koch", "1", "1", "black", ""}, false},
-		{parameters{"!@#$", "1", "1", "black", "1"}, false},
-		{parameters{"koch", "-1", "1", "black", "1"}, false},
-		{parameters{"koch", "1", "-1", "red", "1"}, false},
-		{parameters{"koch", "1", "1", "black", "-1"}, false},
+		{parameters{"koch", "1", "1", "black", "1", false}, true},
+		{parameters{"", "1", "1", "black", "1", false}, false},
+		{parameters{"koch", "", "1", "black", "1", false}, false},
+		{parameters{"koch", "1", "1", "", "1", true}, false},
+		{parameters{"koch", "1", "", "black", "1", false}, false},
+		{parameters{"koch", "1", "1", "black", "", false}, false},
+		{parameters{"!@#$", "1", "1", "black", "1", true}, false},
+		{parameters{"koch", "-1", "1", "black", "1", true}, false},
+		{parameters{"koch", "1", "-1", "red", "1", false}, false},
+		{parameters{"koch", "1", "1", "black", "-1", true}, false},
 	}
 	for i, test := range table {
 		svg, err := renderSVG(test.params)
