@@ -34,7 +34,7 @@ func (s *System) cacheRender(depth int) [][]vector {
 		return s.render(depth)
 	}
 
-	filename := fmt.Sprintf("/app/cache/%s-%d.gob", name, depth)
+	filename := fmt.Sprintf("cache/%s-%d.gob", name, depth)
 	_, err := os.Stat(filename)
 	if err == nil {
 		log.Println("Cache hit:", filename)
