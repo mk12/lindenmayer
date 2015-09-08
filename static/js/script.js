@@ -14,6 +14,9 @@ window.onload = function() {
 		if (depth !== null) {
 			url += '/' + depth;
 		}
+		if (onlySVG) {
+			url += '.svg';
+		}
 
 		params = [];
 		if (_thickness !== '3') {
@@ -21,9 +24,6 @@ window.onload = function() {
 		}
 		if (_color !== 'black') {
 			params.push('c=' + encodeURIComponent(_color));
-		}
-		if (onlySVG) {
-			params.push('svg=1');
 		}
 		if (params.length > 0) {
 			url += '?' + params.join('&');

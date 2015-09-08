@@ -100,17 +100,32 @@ func fail(w http.ResponseWriter, reason string) {
 	display(w, "404", nil)
 }
 
-// splitPath returns a slice of URL path segments by splitting on slashes. The
-// presence of a leading or trailing slash does not affect the result.
-func splitPath(path string) []string {
-	segs := strings.Split(path, "/")
+// splitPath returns a slice of URL path segments by splitting on slashes. It
+// also returns the extension, if present. The presence of a leading or trailing
+// slash does not affect the result.
+func splitPath(path string) (segs []string, ext string) {
+	segs = strings.Split(path, "/")
 	if len(segs) > 0 && segs[0] == "" {
 		segs = segs[1:]
 	}
 	if s := len(segs); s > 0 && segs[s-1] == "" {
 		segs = segs[:s-1]
 	}
-	return segs
+	if s := len(segs); s > 0 {
+		last := segs[s-1]
+		i := strings.LastIndexByte(last, '.')
+		if i != -1 {
+			if i < len(last)-1 {
+				ext = last[i+1:]
+			}
+			if name := last[:i]; name != "" {
+				segs[s-1] = name
+			} else {
+				segs = segs[:s-1]
+			}
+		}
+	}
+	return
 }
 
 // parseParams parses the parameters from the URL, and uses defaultParams if
@@ -118,12 +133,15 @@ func splitPath(path string) []string {
 func parseParams(href *url.URL) parameters {
 	params := defaultParams
 
-	path := splitPath(href.Path)
+	path, ext := splitPath(href.Path)
 	if len(path) >= 1 {
 		params.name = path[0]
 	}
 	if len(path) >= 2 {
 		params.depth = path[1]
+	}
+	if ext == "svg" {
+		params.onlySVG = true
 	}
 
 	query := href.Query()
@@ -135,9 +153,6 @@ func parseParams(href *url.URL) parameters {
 	}
 	if precision := query.Get("p"); precision != "" {
 		params.precision = precision
-	}
-	if onlySVG := query.Get("svg"); onlySVG != "" {
-		params.onlySVG = true
 	}
 
 	return params
