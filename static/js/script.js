@@ -98,6 +98,10 @@ window.onload = function() {
 		xhr.send();
 	};
 
+	var downloadSVG = function() {
+		window.open(getURL(_NAME, _depth, true), '_blank');
+	};
+
 	var setStyle = function(name, value) {
 		var svg = curveDiv.firstElementChild;
 		var defs = svg.firstElementChild;
@@ -105,11 +109,10 @@ window.onload = function() {
 		var rule = style.firstChild;
 		var regex = new RegExp(name + ':[^;]+');
 		rule.nodeValue = rule.nodeValue.replace(regex, name + ': ' + value);
-	}
+	};
 
 	var decIncClick = function(delta) {
-		return function(e) {
-			e.preventDefault();
+		return function() {
 			if (!decIncLocked) {
 				_depth += delta;
 				reloadSVG();
@@ -117,32 +120,39 @@ window.onload = function() {
 				updateDecInc();
 			}
 		}
-	}
+	};
 
-	submitDiv.style.display = 'none';
-
-	decBtn.addEventListener('click', decIncClick(-1));
-	incBtn.addEventListener('click', decIncClick(+1));
-
-	thicknessRange.addEventListener('change', function() {
+	var handleThickness = function() {
 		var oldThickness = _thickness;
 		_thickness = thicknessRange.value;
 		updateURL();
 		updateNavLinks();
 		setStyle('stroke-width', adjustedThickness());
 		updateViewBox(oldThickness);
-	});
+	};
 
-	extraForm.addEventListener('submit', function(e) {
-		e.preventDefault();
+	var handleColor = function() {
 		_color = colorField.value;
 		updateURL();
 		updateNavLinks();
 		setStyle('stroke', _color);
-	});
+	};
 
-	downloadBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		window.open(getURL(_NAME, _depth, true), '_blank');
-	});
+	var hijack = function(fn) {
+		return function(event) {
+			if (event.cancelable) {
+				event.preventDefault();
+			}
+			fn();
+		}
+	};
+
+	submitDiv.style.display = 'none';
+
+	decBtn.addEventListener('click', hijack(decIncClick(-1)));
+	incBtn.addEventListener('click', hijack(decIncClick(+1)));
+	thicknessRange.addEventListener('change', handleThickness);
+	colorField.addEventListener('blur', handleColor);
+	extraForm.addEventListener('submit', hijack(handleColor));
+	downloadBtn.addEventListener('click', hijack(downloadSVG));
 }
