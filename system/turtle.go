@@ -6,7 +6,7 @@ import "math"
 
 // A vector is a two-dimensional Euclidean vector with x and y components.
 type vector struct {
-	x, y float64
+	X, Y float64
 }
 
 // A turtle is a friendly animal that controls drawing.
@@ -40,8 +40,8 @@ func (s *System) initialTurtle(depth int) turtle {
 
 // advance moves the turtle forward by one step.
 func (t *turtle) advance() {
-	t.pos.x += t.vel.x
-	t.pos.y -= t.vel.y
+	t.pos.X += t.vel.X
+	t.pos.Y -= t.vel.Y
 }
 
 // turnCCW turns the turtle counterclockwise by one step.
@@ -57,6 +57,6 @@ func (t *turtle) turnCW() {
 // rotate changes the turtle's direction by delta (in radians).
 func (t *turtle) rotate(delta float64) {
 	t.dir += delta
-	t.vel.x = t.step * math.Cos(t.dir)
-	t.vel.y = t.step * math.Sin(t.dir)
+	t.vel.X = t.step * math.Cos(t.dir)
+	t.vel.Y = t.step * math.Sin(t.dir)
 }

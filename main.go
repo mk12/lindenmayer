@@ -211,13 +211,12 @@ func mainHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	params := parseParams(req.URL)
+	log.Printf("Rendering %+v\n", params)
 	svg, err := renderSVG(params)
 	if err != nil {
 		fail(w, err.Error())
 		return
 	}
-
-	log.Printf("Rendering %+v\n", params)
 
 	if params.onlySVG {
 		w.Header().Set("Content-Type", "image/svg+xml")

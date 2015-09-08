@@ -5,6 +5,10 @@ package system
 
 import (
 	"bytes"
+	"encoding/gob"
+	"fmt"
+	"log"
+	"os"
 	"unicode"
 )
 
@@ -21,6 +25,50 @@ type System struct {
 	base  float64    // Base b in y ~ b^x where y is size and x is depth.
 	min   int        // Number of initial depths to skip.
 	max   int        // Maximum depth of recursion.
+}
+
+// cacheRender is like render but caches results to disk for better performance.
+func (s *System) cacheRender(depth int) [][]vector {
+	name := s.name()
+	if name == "" {
+		return s.render(depth)
+	}
+
+	filename := fmt.Sprintf("cache/%s-%d.gob", name, depth)
+	_, err := os.Stat(filename)
+	if err == nil {
+		log.Println("Cache hit:", filename)
+		file, err := os.Open(filename)
+		if err != nil {
+			log.Println("File open error:", err)
+			return s.render(depth)
+		}
+		defer file.Close()
+
+		var segments [][]vector
+		err = gob.NewDecoder(file).Decode(&segments)
+		if err != nil {
+			log.Println("Gob decode error:", err)
+			return s.render(depth)
+		}
+		return segments
+	}
+	if os.IsNotExist(err) {
+		log.Println("Cache miss:", filename)
+		segments := s.render(depth)
+		file, err := os.Create(filename)
+		if err != nil {
+			log.Println("File create error:", err)
+			return segments
+		}
+		defer file.Close()
+
+		gob.NewEncoder(file).Encode(segments)
+		return segments
+	}
+
+	log.Println("File stat error:", err)
+	return s.render(depth)
 }
 
 // render draws the curve for the system at the given depth of recursion. It

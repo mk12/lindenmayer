@@ -20,7 +20,7 @@ type Options struct {
 
 // SVG renders the system as a curve, returning a string of SVG data.
 func (s *System) SVG(opts *Options) string {
-	segments := s.render(s.min + opts.Depth)
+	segments := s.cacheRender(s.min + opts.Depth)
 	view := calcViewBox(segments, opts)
 	thickness := opts.Thickness * math.Max(view.w, view.h) / StepFactor
 	p := fmtPrecision(opts.Precision)
@@ -37,7 +37,7 @@ func (s *System) SVG(opts *Options) string {
 	for _, points := range segments {
 		buf.WriteString("<polyline points='")
 		for _, pt := range points {
-			fmt.Fprintf(&buf, "%s,%s ", p(pt.x), p(pt.y))
+			fmt.Fprintf(&buf, "%s,%s ", p(pt.X), p(pt.Y))
 		}
 		buf.WriteString("'/>")
 	}
@@ -59,15 +59,15 @@ func calcViewBox(segments [][]vector, opts *Options) viewBox {
 	var xMin, xMax, yMin, yMax float64
 	for _, points := range segments {
 		for _, pt := range points {
-			if pt.x < xMin {
-				xMin = pt.x
-			} else if pt.x > xMax {
-				xMax = pt.x
+			if pt.X < xMin {
+				xMin = pt.X
+			} else if pt.X > xMax {
+				xMax = pt.X
 			}
-			if pt.y < yMin {
-				yMin = pt.y
-			} else if pt.y > yMax {
-				yMax = pt.y
+			if pt.Y < yMin {
+				yMin = pt.Y
+			} else if pt.Y > yMax {
+				yMax = pt.Y
 			}
 		}
 	}

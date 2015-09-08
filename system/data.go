@@ -7,9 +7,20 @@ import "math"
 // Named returns the system with the given name, or nil if it doesn't exist.
 func Named(name string) *System {
 	if sys, ok := namedSystems[name]; ok {
-		return &sys
+		return sys
 	}
 	return nil
+}
+
+// name returns the name of the system, if it is an instance in namedSystems.
+// Otherwise, returns the empty string.
+func (s *System) name() string {
+	for key, sys := range namedSystems {
+		if s == sys {
+			return key
+		}
+	}
+	return ""
 }
 
 // MaxDepth returns the maximum depth the system should be rendered at.
@@ -18,7 +29,7 @@ func (s *System) MaxDepth() int {
 }
 
 // namedSystems contains some common Lindenmayer systems.
-var namedSystems = map[string]System{
+var namedSystems = map[string]*System{
 	"koch": {
 		axiom: []byte("F++F++F"),
 		rules: rewriteSet{
