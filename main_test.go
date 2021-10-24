@@ -54,7 +54,7 @@ func Test_display500(t *testing.T) {
 		t.Errorf("got %d, want http.StatusInternalServerError", w.Code)
 	}
 	if w.Body.Len() != 0 {
-		t.Error("should not render a body: %q", w.Body.String())
+		t.Errorf("should not render a body: %q", w.Body.String())
 	}
 	if !bytes.Contains(buf.Bytes(), []byte("500")) {
 		t.Error("should have logged the 500")
