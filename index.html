@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lindenmayer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Slabo+13px&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>Lindenmayer</h1>
+    </header>
+    <main class="main">
+      <div class="panel controls">
+        <a id="DecDepth" class="depth" href="#">DEC</a>
+        <a id="IncDepth" class="depth" href="#">INC</a>
+        <div class="wide-only">
+          <div class="group">
+            <label for="Thickness">thickness</label>
+            <input id="Thickness" name="t" type="range" min="0.25" max="10" step="0.25" value="3">
+          </div>
+          <div class="group">
+            <label for="Color">color</label>
+            <input id="Color" name="c" type="text" value="black">
+          </div>
+          <div class="group lone-button">
+            <a id="Download" href="#">Download</a>
+          </div>
+        </div>
+      </div>
+      <div id="Curve" class="content"></div>
+      <nav class="panel navigation">
+        <ul id="CurveNameList">
+          <li><a href="#">koch</a></li>
+          <li><a href="#">hilbert</a></li>
+          <li><a href="#">peano</a></li>
+          <li><a href="#">gosper</a></li>
+          <li><a href="#">sierpinski</a></li>
+          <li><a href="#">rings</a></li>
+          <li><a href="#">tree</a></li>
+          <li><a href="#">plant</a></li>
+          <li><a href="#">willow</a></li>
+          <li><a href="#">dragon</a></li>
+          <li><a href="#">island</a></li>
+        </ul>
+      </nav>
+    </main>
+    <footer>© 2023 <a href="https://mitchellkember.com">Mitchell Kember</a></footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
